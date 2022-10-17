@@ -1,6 +1,6 @@
 import React from "react";
 import { Cell } from "./Cell";
-import { getCellContentMap, updateCellContentMap } from "./contentByCellMap";
+import { getCellContentMap } from "./contentByCellMap";
 
 const useForceUpdate = () =>
   React.useReducer((x: number) => (x ? x - 1 : x + 1), 0)[1];

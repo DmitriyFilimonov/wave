@@ -14,6 +14,8 @@ const onDrag = (e: React.DragEvent<HTMLDivElement>) => {
   if (e.clientX !== clientX || e.clientY !== clientY) {
     clientX = e.clientX;
     clientY = e.clientY;
+  } else {
+    e.preventDefault();
   }
 };
 
