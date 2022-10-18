@@ -1,11 +1,10 @@
 import React from "react";
-import {
-  IDropDragMap,
-  IDragAndDropContextWithMethods,
-  IDragAndDropContextProps,
-} from "./types";
+import { DragAndDropContext } from "./Context";
+import { IDragAndDropProps } from "./types";
 
-let _plainContextValue = { content: {}, dropDragMap: {} };
+import { IDropDragMap } from "./types";
+
+let _plainContextValue = { dragTargets: {}, dropDragMap: {} };
 
 const updateCellContextMap = (newDropDragMap: IDropDragMap) => {
   _plainContextValue = {
@@ -22,6 +21,7 @@ const listeners: ((param: IDropDragMap) => void)[] = [];
 
 const subscribe = (listener: (param: IDropDragMap) => void) => {
   listeners.push(listener);
+  console.log(listeners);
 };
 
 let _contextValueWithMethods = {
@@ -30,22 +30,19 @@ let _contextValueWithMethods = {
   subscribe,
 };
 
-export const DragAndDropContextPure =
-  React.createContext<IDragAndDropContextWithMethods>(_contextValueWithMethods);
-
-export function DragAndDropContext({
-  content,
+export function DragAndDrop({
+  dragTargets,
   dropDragMap,
   children,
-}: IDragAndDropContextProps & { children: React.ReactNode }): ReturnType<
-  React.FC<IDragAndDropContextProps>
+}: IDragAndDropProps & { children: React.ReactNode }): ReturnType<
+  React.FC<IDragAndDropProps>
 > {
-  _contextValueWithMethods.content = content;
+  _contextValueWithMethods.dragTargets = dragTargets;
   _contextValueWithMethods.dropDragMap = dropDragMap;
 
   return (
-    <DragAndDropContextPure.Provider value={_contextValueWithMethods}>
+    <DragAndDropContext.Provider value={_contextValueWithMethods}>
       {children}
-    </DragAndDropContextPure.Provider>
+    </DragAndDropContext.Provider>
   );
 }

@@ -1,10 +1,10 @@
 export interface IDraggable {
-  parentCellId: string;
-  contentId: string | undefined;
+  parentDropTargetId: string;
+  dragTargetId: string | undefined;
 }
 
 interface IContent {
-  [key: string]: React.FC<IDraggable> | React.VFC<IDraggable> | undefined;
+  [key: string]: React.FC<IDraggable> | React.VFC<IDraggable>;
 }
 
 export interface IDropDragMap {
@@ -12,11 +12,11 @@ export interface IDropDragMap {
 }
 
 export interface IPlainDragAndDropContext {
-  content: IContent;
+  dragTargets: IContent;
   dropDragMap: IDropDragMap;
 }
 
-export interface IDragAndDropContextProps extends IPlainDragAndDropContext {}
+export interface IDragAndDropProps extends IPlainDragAndDropContext {}
 
 interface IDragAndDropContextMethods {
   updateCellContextMap: (newCellContentMap: IDropDragMap) => void;
@@ -33,3 +33,8 @@ export interface IDragTargetProps {
 export interface IDropTargetLayoutProps {
   border: string;
 }
+export type DropBaseCreatorParams = {
+  dropTargetId: string;
+  dropDragMap: IDropDragMap | undefined;
+  updateCellContextMap: ((newCellContentMap: IDropDragMap) => void) | undefined;
+};

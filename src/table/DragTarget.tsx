@@ -1,19 +1,28 @@
 import React from "react";
-import { DragAndDropContextPure } from "./DragAndDropContext";
+import { DragAndDropContext } from "./Context";
 import { IDraggable } from "./types";
 
 export const DragTarget: React.VFC<IDraggable> = ({
-  parentCellId,
-  contentId,
+  parentDropTargetId,
+  dragTargetId,
 }) => {
-  const context = React.useContext(DragAndDropContextPure);
+  const hasParentCellContent = !!dragTargetId;
+
+  if (!hasParentCellContent) {
+    return null;
+  }
+
+  const context = React.useContext(DragAndDropContext)!;
 
   const ContentComponent = React.useCallback(
-    contentId && context.content
-      ? context.content[contentId] || (() => null)
-      : () => null,
-    [contentId, context.content]
+    context.dragTargets[dragTargetId],
+    [dragTargetId, context.dragTargets]
   );
 
-  return <ContentComponent parentCellId={parentCellId} contentId={contentId} />;
+  return (
+    <ContentComponent
+      parentDropTargetId={parentDropTargetId}
+      dragTargetId={dragTargetId}
+    />
+  );
 };

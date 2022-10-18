@@ -3,7 +3,7 @@ import React from "react";
 import { Browser } from "./browser";
 import { Synth } from "./synth";
 import styled from "styled-components";
-import { DragAndDropContext, DropTarget } from "./table";
+import { DragAndDrop, DropTarget } from "./table";
 import { withDraggable } from "./table";
 
 const AppLayout = styled.div`
@@ -19,7 +19,7 @@ const dropDragMap = {
   cell2: "component",
   cell3: undefined,
 };
-const content = {
+const dragTargets = {
   component: withDraggable(() => {
     return <div style={{ color: "white" }}>content</div>;
   }),
@@ -28,13 +28,13 @@ const content = {
 const App = () => {
   return (
     <AppLayout>
-      <DragAndDropContext dropDragMap={dropDragMap} content={content}>
+      <DragAndDrop dropDragMap={dropDragMap} dragTargets={dragTargets}>
         {/* <Browser />
         <Synth /> */}
         <DropTarget dropTargetId={"cell1"} />
         <DropTarget dropTargetId={"cell2"} />
         <DropTarget dropTargetId={"cell3"} />
-      </DragAndDropContext>
+      </DragAndDrop>
     </AppLayout>
   );
 };

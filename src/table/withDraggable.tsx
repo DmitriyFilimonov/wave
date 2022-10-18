@@ -15,21 +15,21 @@ const onDrag = (e: React.DragEvent<HTMLDivElement>) => {
 };
 
 export const withDraggable =
-  (Content: React.FC): React.VFC<IDraggable> =>
-  ({ parentCellId, contentId }) => {
+  (DragTarget: React.FC): React.VFC<IDraggable> =>
+  ({ parentDropTargetId, dragTargetId }) => {
     const onDragStart = React.useCallback(
       (e: React.DragEvent<HTMLDivElement>) => {
         e.dataTransfer.setData(
           "Text",
-          JSON.stringify({ parentCellId, contentId })
+          JSON.stringify({ parentDropTargetId, dragTargetId })
         );
       },
-      [{ parentCellId, contentId }]
+      [{ parentDropTargetId, dragTargetId }]
     );
 
     return (
       <Draggable draggable="true" onDragStart={onDragStart} onDrag={onDrag}>
-        <Content />
+        <DragTarget />
       </Draggable>
     );
   };
