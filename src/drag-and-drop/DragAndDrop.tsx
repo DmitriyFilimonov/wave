@@ -21,7 +21,6 @@ const listeners: ((param: IDropDragMap) => void)[] = [];
 
 const subscribe = (listener: (param: IDropDragMap) => void) => {
   listeners.push(listener);
-  console.log(listeners);
 };
 
 let _contextValueWithMethods = {

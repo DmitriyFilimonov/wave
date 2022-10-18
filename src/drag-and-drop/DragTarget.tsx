@@ -6,9 +6,9 @@ export const DragTarget: React.VFC<IDraggable> = ({
   parentDropTargetId,
   dragTargetId,
 }) => {
-  const hasParentCellContent = !!dragTargetId;
+  const doesParentCellHaveContent = !!dragTargetId;
 
-  if (!hasParentCellContent) {
+  if (!doesParentCellHaveContent) {
     return null;
   }
 

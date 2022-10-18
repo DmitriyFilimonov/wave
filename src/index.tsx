@@ -3,8 +3,7 @@ import React from "react";
 import { Browser } from "./browser";
 import { Synth } from "./synth";
 import styled from "styled-components";
-import { DragAndDrop, DropTarget } from "./table";
-import { withDraggable } from "./table";
+import { DragAndDrop, DropTarget, withDraggable } from "./drag-and-drop";
 
 const AppLayout = styled.div`
   position: relative;
@@ -29,8 +28,8 @@ const App = () => {
   return (
     <AppLayout>
       <DragAndDrop dropDragMap={dropDragMap} dragTargets={dragTargets}>
-        {/* <Browser />
-        <Synth /> */}
+        <Browser />
+        <Synth />
         <DropTarget dropTargetId={"cell1"} />
         <DropTarget dropTargetId={"cell2"} />
         <DropTarget dropTargetId={"cell3"} />
