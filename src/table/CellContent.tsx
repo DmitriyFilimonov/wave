@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { DragAndDropContextPure } from "./DragAndDropContext";
 
 const Draggable = styled.div`
   width: 50px;
@@ -25,7 +26,7 @@ const getOnDragStart =
     e.dataTransfer.setData("Text", JSON.stringify({ parentCellId, contentId }));
   };
 
-const withDraggable =
+export const withDraggable =
   (Content: React.FC): React.VFC<IDraggable> =>
   (props) => {
     const onDragStart = React.useCallback(getOnDragStart(props), [props]);
@@ -37,12 +38,6 @@ const withDraggable =
     );
   };
 
-const ADSR: React.VFC = () => <>ADSR</>;
-
-const content = {
-  content: withDraggable(ADSR),
-};
-
 export interface IDraggable {
   parentCellId: string;
   contentId: string | undefined;
@@ -52,9 +47,13 @@ export const CellContent: React.VFC<IDraggable> = ({
   parentCellId,
   contentId,
 }) => {
+  const context = React.useContext(DragAndDropContextPure);
+
   const ContentComponent = React.useCallback(
-    contentId ? content[contentId] : () => null,
-    [contentId]
+    contentId && context.content
+      ? context.content[contentId] || (() => null)
+      : () => null,
+    [contentId, context.content]
   );
 
   return <ContentComponent parentCellId={parentCellId} contentId={contentId} />;
