@@ -1,69 +1,50 @@
 import React from "react";
-import { IDraggable } from "./CellContent";
+import {
+  IDropDragMap,
+  IDragAndDropContextWithMethods,
+  IDragAndDropContextProps,
+} from "./types";
 
-interface IContent {
-  [key: string]: React.FC<IDraggable> | React.VFC<IDraggable> | undefined;
-}
+let _plainContextValue = { content: {}, dropDragMap: {} };
 
-export interface ICellContentMap {
-  [key: string]: string | undefined;
-}
-
-interface IDragAndDropContextProps {
-  content: IContent;
-  cellContentMap: ICellContentMap;
-}
-
-interface IDragAndDropContextMethods {
-  updateCellContextMap: typeof updateCellContextMap;
-  subscribe: (listener: (param: ICellContentMap) => void) => void;
-}
-
-export interface IDragAndDropContext
-  extends IDragAndDropContextProps,
-    IDragAndDropContextMethods {}
-
-let _plainValue = { content: {}, cellContentMap: {} };
-
-const updateCellContextMap = (
-  newCellContentMap: IDragAndDropContextProps["cellContentMap"]
-) => {
-  _plainValue = {
-    ..._plainValue,
-    cellContentMap: newCellContentMap,
+const updateCellContextMap = (newDropDragMap: IDropDragMap) => {
+  _plainContextValue = {
+    ..._plainContextValue,
+    dropDragMap: newDropDragMap,
   };
+
   listeners.forEach((listener) => {
-    listener(_plainValue.cellContentMap);
+    listener(_plainContextValue.dropDragMap);
   });
 };
 
-const listeners: ((param: ICellContentMap) => void)[] = [];
+const listeners: ((param: IDropDragMap) => void)[] = [];
 
-const subscribe = (listener: (param: ICellContentMap) => void) => {
+const subscribe = (listener: (param: IDropDragMap) => void) => {
   listeners.push(listener);
 };
 
-let value = {
-  ..._plainValue,
+let _contextValueWithMethods = {
+  ..._plainContextValue,
   updateCellContextMap,
   subscribe,
 };
 
-export let DragAndDropContextPure: React.Context<IDragAndDropContext> =
-  React.createContext<IDragAndDropContext>(value);
+export const DragAndDropContextPure =
+  React.createContext<IDragAndDropContextWithMethods>(_contextValueWithMethods);
 
 export function DragAndDropContext({
   content,
-  cellContentMap,
+  dropDragMap,
   children,
 }: IDragAndDropContextProps & { children: React.ReactNode }): ReturnType<
   React.FC<IDragAndDropContextProps>
 > {
-  value.content = content;
-  value.cellContentMap = cellContentMap;
+  _contextValueWithMethods.content = content;
+  _contextValueWithMethods.dropDragMap = dropDragMap;
 
   return (
-    <DragAndDropContextPure.Provider value={value}>
+    <DragAndDropContextPure.Provider value={_contextValueWithMethods}>
       {children}
     </DragAndDropContextPure.Provider>
   );

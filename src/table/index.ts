@@ -1,3 +1,3 @@
 export { DragAndDropContext } from "./DragAndDropContext";
-export { DropZone } from "./DropZone";
-export { withDraggable } from "./CellContent";
+export { DropTargetWithSubscription as DropTarget } from "./DropTarget";
+export { withDraggable } from "./withDraggable";

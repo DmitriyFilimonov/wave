@@ -1,28 +1,16 @@
 import React, { useCallback } from "react";
-import styled from "styled-components";
-import { CellContent, IDraggable } from "./CellContent";
+import { DragTarget } from "./DragTarget";
+import { DragAndDropContextPure } from "./DragAndDropContext";
+import { DropTargetLayout } from "./styled";
 import {
-  DragAndDropContextPure,
-  ICellContentMap,
-  IDragAndDropContext,
-} from "./DragAndDropContext";
-
-interface ICellLayoutProps {
-  border: string;
-}
-
-const CellLayout = styled.div<ICellLayoutProps>`
-  border: ${({ border }) => border};
-  width: 100px;
-  height: 55px;
-
-  & + & {
-    margin-top: 5px;
-  }
-`;
+  IDropDragMap,
+  IDragTargetProps,
+  IDragAndDropContextWithMethods,
+  IDraggable,
+} from "./types";
 
 const getOnDropBase =
-  (dropTargetId: string, context: IDragAndDropContext) =>
+  (dropTargetId: string, context: IDragAndDropContextWithMethods) =>
   (e: React.DragEvent<HTMLDivElement>) => {
     const eventPayloadJSON = e.dataTransfer.getData("Text");
 
@@ -32,7 +20,7 @@ const getOnDropBase =
     }: IDraggable = JSON.parse(eventPayloadJSON);
 
     const newCellContentMap = {
-      ...context.cellContentMap,
+      ...context.dropDragMap,
       [dragTargetParentCellId]: undefined,
       [dropTargetId]: dragTargetId,
     };
@@ -40,31 +28,12 @@ const getOnDropBase =
     context.updateCellContextMap(newCellContentMap);
   };
 
-interface ICellProps {
-  cellId: string;
-}
-
 const DEFAULT_BORDER = "1px solid green";
 const ENTER_BORDER = "3px dotted red";
 
-export const DropZone: React.VFC<ICellProps> = ({ cellId }) => {
-  const context = React.useContext(DragAndDropContextPure);
-  const [contentId, setContentId] = React.useState(
-    context.cellContentMap[cellId]
-  );
-
-  React.useEffect(() => {
-    context.subscribe((cellContentMap: ICellContentMap) =>
-      setContentId(cellContentMap[cellId])
-    );
-  }, [context, cellId]);
-
-  return <DropZonePure cellId={cellId} contentId={contentId} />;
-};
-
-export const DropZonePure: React.VFC<
-  ICellProps & { contentId: string | undefined }
-> = ({ cellId: dropTargetId, contentId }) => {
+const DropTargetPure: React.VFC<
+  IDragTargetProps & { contentId: string | undefined }
+> = ({ dropTargetId: dropTargetId, contentId }) => {
   const context = React.useContext(DragAndDropContextPure);
 
   const onDrop = React.useCallback(
@@ -72,7 +41,7 @@ export const DropZonePure: React.VFC<
       getOnDropBase(dropTargetId, context)(e);
       setBorder(DEFAULT_BORDER);
     },
-    [dropTargetId, context.cellContentMap]
+    [dropTargetId, context.dropDragMap]
   );
 
   const [border, setBorder] = React.useState<
@@ -84,7 +53,7 @@ export const DropZonePure: React.VFC<
   const onDragLeave = useCallback(() => setBorder(DEFAULT_BORDER), []);
 
   return (
-    <CellLayout
+    <DropTargetLayout
       onDragOver={(e) => {
         e.preventDefault();
       }}
@@ -93,7 +62,22 @@ export const DropZonePure: React.VFC<
       onDragLeave={onDragLeave}
       onDrop={onDrop}
     >
-      <CellContent contentId={contentId} parentCellId={dropTargetId} />
-    </CellLayout>
+      <DragTarget contentId={contentId} parentCellId={dropTargetId} />
+    </DropTargetLayout>
   );
+};
+
+export const DropTargetWithSubscription: React.VFC<IDragTargetProps> = ({
+  dropTargetId: cellId,
+}) => {
+  const context = React.useContext(DragAndDropContextPure);
+  const [contentId, setContentId] = React.useState(context.dropDragMap[cellId]);
+
+  React.useEffect(() => {
+    context.subscribe((cellContentMap: IDropDragMap) =>
+      setContentId(cellContentMap[cellId])
+    );
+  }, [context, cellId]);
+
+  return <DropTargetPure dropTargetId={cellId} contentId={contentId} />;
 };
